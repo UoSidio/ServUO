@@ -2519,6 +2519,39 @@ m_Stream.Write( (int) renderMode );
 		}
 	}
 
+	public sealed class SkillUpdateOld : Packet
+	{
+		public SkillUpdateOld(Skills skills)
+			: base(0x3A)
+		{
+			EnsureCapacity(4 + (skills.Length * 7));
+
+			m_Stream.Write((byte)0x00);
+
+			for (int i = 0; i < skills.Length; ++i)
+			{
+				Skill s = skills[i];
+
+				double v = s.NonRacialValue;
+				int uv = (int)(v * 10);
+
+				if (uv < 0)
+				{
+					uv = 0;
+				}
+				else if (uv >= 0x10000)
+				{
+					uv = 0xFFFF;
+				}
+
+				m_Stream.Write((ushort)(s.Info.SkillID + 1));
+				m_Stream.Write((ushort)uv);
+				m_Stream.Write((ushort)s.BaseFixedPoint);
+				m_Stream.Write((byte)s.Lock);
+			}
+		}
+	}
+
 	public sealed class SkillUpdate : Packet
 	{
 		public SkillUpdate(Skills skills)

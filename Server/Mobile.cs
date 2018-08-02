@@ -12509,7 +12509,14 @@ namespace Server
 		{
 			if (from == this)
 			{
-				Send(new SkillUpdate(m_Skills));
+				if (m_NetState != null && m_NetState.SupportsExpansion(Expansion.AOS))
+				{
+					Send(new SkillUpdate(m_Skills));
+				}
+				else
+				{
+					Send(new SkillUpdateOld(m_Skills));
+				}
 			}
 		}
 
